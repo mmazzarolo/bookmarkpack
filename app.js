@@ -79,7 +79,7 @@ app.use(lusca({
 	xssProtection: true
 }));
 app.use(function(req, res, next) {
-	res.locals.user = req.user;
+	res.locals.session = req.user;
 	next();
 });
 app.use(function(req, res, next) {

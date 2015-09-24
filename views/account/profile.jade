@@ -9,32 +9,32 @@ block content
 		.form-group
 			label.col-sm-3.control-label(for='email') Email
 			.col-sm-7
-				input.form-control(type='email', name='email', id='email', value='#{user.email}')
+				input.form-control(type='email', name='email', id='email', value='#{session.email}')
 		.form-group
 			label.col-sm-3.control-label(for='name') Name
 			.col-sm-7
-				input.form-control(type='text', name='name', id='name', value='#{user.profile.name}')
+				input.form-control(type='text', name='name', id='name', value='#{session.profile.name}')
 		.form-group
 			label.col-sm-3.control-label(for='gender') Gender
 			.col-sm-4
 				label.radio.col-sm-4
-					input(type='radio', checked=user.profile.gender=='male', name='gender', value='male', data-toggle='radio')
+					input(type='radio', checked=session.profile.gender=='male', name='gender', value='male', data-toggle='radio')
 					span Male
 				label.radio.col-sm-4
-					input(type='radio', checked=user.profile.gender=='female', name='gender', value='female', data-toggle='radio')
+					input(type='radio', checked=session.profile.gender=='female', name='gender', value='female', data-toggle='radio')
 					span Female
 		.form-group
 			label.col-sm-3.control-label(for='location') Location
 			.col-sm-7
-				input.form-control(type='text', name='location', id='location', value='#{user.profile.location}')
+				input.form-control(type='text', name='location', id='location', value='#{session.profile.location}')
 		.form-group
 			label.col-sm-3.control-label(for='website') Website
 			.col-sm-7
-				input.form-control(type='text', name='website', id='website', value='#{user.profile.website}')
+				input.form-control(type='text', name='website', id='website', value='#{session.profile.website}')
 		.form-group
 			label.col-sm-3.control-label(for='gravatar') Gravatar
 			.col-sm-4
-				img(src="#{user.gravatar()}", class='profile', width='100', height='100')
+				img(src="#{session.gravatar()}", class='profile', width='100', height='100')
 		.form-group
 			.col-sm-offset-3.col-sm-4
 				button.btn.btn.btn-primary(type='submit')
@@ -77,22 +77,22 @@ block content
 	.form-horizontal
 		.form-group
 			.col-sm-offset-3.col-sm-4
-				if user.google
+				if session.google
 					p: a.text-danger(href='/account/unlink/google') Unlink your Google account
 				else
 					p: a(href='/auth/google') Link your Google account
 			.col-sm-offset-3.col-sm-4
-				if user.facebook
+				if session.facebook
 					p: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
 				else
 					p: a(href='/auth/facebook') Link your Facebook account
 			.col-sm-offset-3.col-sm-4
-				if user.twitter
+				if session.twitter
 					p: a.text-danger(href='/account/unlink/twitter') Unlink your Twitter account
 				else
 					p: a(href='/auth/twitter') Link your Twitter account
 			.col-sm-offset-3.col-sm-4
-				if user.github
+				if session.github
 					p: a.text-danger(href='/account/unlink/github') Unlink your GitHub account
 				else
 					p: a(href='/auth/github') Link your GitHub account
