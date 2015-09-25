@@ -4,6 +4,7 @@ var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 var passport = require('passport');
 var User = require('../models/User');
+var Bookmark = require('../models/Bookmark');
 var secrets = require('../config/secrets');
 
 /**
@@ -398,9 +399,35 @@ exports.getUser = function(req, res) {
 	username = req.params.username;
 	User.findOne({ username: username }, function(err, user) {
 		if (!user) {return res.render('404');console.log("User not found.");};
+		console.log(JSON.stringify(user));
 		res.render('user', {
 			title: username,
 			user: user
+		});
+	});
+};
+
+/**
+ * POST /add
+ * New bookmark.
+ */
+exports.postAdd = function(req, res) {
+	User.findById(req.user.id, function(err, user) {
+		if (err) return next(err);
+
+		var bookmark = new Bookmark({
+			url: req.body.url,
+			name: 'name',
+			title: 'title',
+			hidden: false
+		});
+
+		user.bookmarks.push(bookmark);
+
+		user.save(function(err) {
+			if (err) return next(err);
+			req.flash('success', { msg: 'The bookmark has been added.' });
+			res.redirect('/' + user.username);
 		});
 	});
 };
