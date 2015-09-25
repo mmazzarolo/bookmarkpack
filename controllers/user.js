@@ -113,13 +113,46 @@ exports.getAccount = function(req, res) {
 };
 
 /**
+ * POST /account/id
+ * Update id information.
+ *
+ * If the error is from validation it is showed to the user by express-flash.
+ */
+exports.postUpdateId = function(req, res, next) {
+	req.assert('email', 'Email is not valid').isEmail();
+	req.assert('username', 'Username must be at least 4 characters long').len(4);
+	var errors = req.validationErrors();
+	if (errors) {
+		req.flash('errors', errors);
+		return res.redirect('/account');
+	}
+
+	User.findById(req.user.id, function(err, user) {
+		if (err) return next(err);
+		user.email = req.body.email || '';
+		user.username = req.body.username || '';
+
+		user.save(function(err) {
+			if (err) {
+				if (err.name == 'ValidationError') {
+					for (field in err.errors) req.flash('errors', {msg: err.errors[field].message});
+        	return res.redirect('/account');
+				}
+				return next(err);
+			}
+			req.flash('success', { msg: 'Profile information updated.' });
+			res.redirect('/account');
+		});
+	});
+};
+
+/**
  * POST /account/profile
  * Update profile information.
  */
 exports.postUpdateProfile = function(req, res, next) {
 	User.findById(req.user.id, function(err, user) {
 		if (err) return next(err);
-		user.email = req.body.email || '';
 		user.profile.name = req.body.name || '';
 		user.profile.gender = req.body.gender || '';
 		user.profile.location = req.body.location || '';
@@ -354,5 +387,20 @@ exports.postForgot = function(req, res, next) {
 	], function(err) {
 		if (err) return next(err);
 		res.redirect('/forgot');
+	});
+};
+
+/**
+ * GET /:user
+ * User profile page.
+ */
+exports.getUser = function(req, res) {
+	username = req.params.username;
+	User.findOne({ username: username }, function(err, user) {
+		if (!user) {return res.render('404');console.log("User not found.");};
+		res.render('user', {
+			title: username,
+			user: user
+		});
 	});
 };

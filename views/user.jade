@@ -1,0 +1,9 @@
+extends layout
+
+block content
+	h1 Username: #{user.username}
+	p Email: #{user.username}
+	if user._id = session._id
+		p I am #{user.username}!
+	else
+		p I am NOT #{user.username}!

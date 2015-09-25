@@ -2,14 +2,28 @@ extends ../layout
 
 block content
 	.page-header
-		h3 Profile Information
+		h3 Account id
 
-	form.form-horizontal(action='/account/profile', method='POST')
+	form.form-horizontal(action='/account/id', method='POST')
 		input(type='hidden', name='_csrf', value=_csrf)
 		.form-group
 			label.col-sm-3.control-label(for='email') Email
 			.col-sm-7
 				input.form-control(type='email', name='email', id='email', value='#{session.email}')
+		.form-group
+			label.col-sm-3.control-label(for='username') Username
+			.col-sm-7
+				input.form-control(type='text', name='username', id='username', value='#{session.username || ""}')
+		.form-group
+			.col-sm-offset-3.col-sm-4
+				button.btn.btn-primary(type='submit')
+					| Change account id
+
+	.page-header
+		h3 Profile Information
+
+	form.form-horizontal(action='/account/profile', method='POST')
+		input(type='hidden', name='_csrf', value=_csrf)
 		.form-group
 			label.col-sm-3.control-label(for='name') Name
 			.col-sm-7

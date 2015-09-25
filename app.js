@@ -88,7 +88,6 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
-
 /**
  * Primary app routes.
  */
@@ -105,6 +104,7 @@ app.post('/signup', userController.postSignup);
 app.get('/contact', contactController.getContact);
 app.post('/contact', contactController.postContact);
 app.get('/account', passportConf.isAuthenticated, userController.getAccount);
+app.post('/account/id', passportConf.isAuthenticated, userController.postUpdateId);
 app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);
 app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
@@ -133,6 +133,11 @@ app.get('/auth/linkedin', passport.authenticate('linkedin', { state: 'SOME STATE
 app.get('/auth/linkedin/callback', passport.authenticate('linkedin', { failureRedirect: '/login' }), function(req, res) {
 	res.redirect(req.session.returnTo || '/');
 });
+
+/**
+ * User profiles.
+ */
+app.get('/:username', userController.getUser);
 
 /**
  * Error Handler.

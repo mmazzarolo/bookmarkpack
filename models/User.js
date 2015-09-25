@@ -1,10 +1,14 @@
+var _ = require('lodash');
 var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
+
+var reserved = require('../config/reserved');
 
 var userSchema = new mongoose.Schema({
 	username: { type: String, unique: true, sparse: true, index: true, lowercase: true },
-	email: { type: String, unique: true, lowercase: true },
+	email: { type: String, unique: true, index: true, lowercase: true },
 	password: String,
 
 	facebook: String,
@@ -45,6 +49,13 @@ userSchema.pre('save', function(next) {
 });
 
 /**
+ * Username validation.
+ */
+userSchema.path('username').validate(function (username) {
+	return !_.contains(reserved.usernames, username);
+}, 'Reserved username.');
+
+/**
  * Helper method for validating user's password.
  */
 userSchema.methods.comparePassword = function(candidatePassword, cb) {
@@ -63,5 +74,17 @@ userSchema.methods.gravatar = function(size) {
 	var md5 = crypto.createHash('md5').update(this.email).digest('hex');
 	return 'https://gravatar.com/avatar/' + md5 + '?s=' + size + '&d=retro';
 };
+
+/**
+ * Helper method for checking if the username is available.
+ */
+userSchema.methods.isUsernameAvailable = function(size) {
+	if (!size) size = 200;
+	if (!this.email) return 'https://gravatar.com/avatar/?s=' + size + '&d=retro';
+	var md5 = crypto.createHash('md5').update(this.email).digest('hex');
+	return 'https://gravatar.com/avatar/' + md5 + '?s=' + size + '&d=retro';
+};
+
+userSchema.plugin(uniqueValidator, {message: 'The {PATH} "{VALUE}" is already in use.'});
 
 module.exports = mongoose.model('User', userSchema);
