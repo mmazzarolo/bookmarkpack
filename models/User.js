@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
 
 var reserved = require('../config/reserved');
+var Bookmark = require('./Bookmark');
 
 var userSchema = new mongoose.Schema({
 	username: { type: String, unique: true, sparse: true, index: true, lowercase: true },
@@ -29,7 +30,7 @@ var userSchema = new mongoose.Schema({
 	resetPasswordToken: String,
 	resetPasswordExpires: Date,
 
-	bookmarks: [{ type: mongoose.Schema.ObjectId, ref: 'Bookmark'}]
+	bookmarks: [mongoose.model('Bookmark').schema]
 });
 
 /**
@@ -52,6 +53,7 @@ userSchema.pre('save', function(next) {
  * Username validation.
  */
 userSchema.path('username').validate(function (username) {
+	console.log('ciao');
 	return !_.contains(reserved.usernames, username);
 }, 'Reserved username.');
 

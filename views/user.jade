@@ -4,22 +4,25 @@ block content
 	h1 Username: #{user.username}
 	p Email: #{user.username}
 
+	ul
 	for bookmark in user.bookmarks
-		p #{bookmark.url}
+		li: a(href='#{bookmark.url}') #{bookmark.title}
 
-	if user._id = session._id
-		.page-header
-		h3 Add a new bookmark
 
-		form.form-horizontal(action='/add', method='POST')
-			input(type='hidden', name='_csrf', value=_csrf)
-			.form-group
-				label.col-sm-3.control-label(for='bookmark') Bookmark URL:
-				.col-sm-7
-					input.form-control(type='text', name='bookmark', id='bookmark')
-			.form-group
-				.col-sm-offset-3.col-sm-4
-					button.btn.btn-primary(type='submit')
-						| Add new bookmark
-	else
-		p I am NOT #{user.username}!
+	if session
+		if user._id = session._id
+			.page-header
+			h3 Add a new bookmark
+
+			form.form-horizontal(action='/add', method='POST')
+				input(type='hidden', name='_csrf', value=_csrf)
+				.form-group
+					label.col-sm-3.control-label(for='bookmark') Bookmark URL:
+					.col-sm-7
+						input.form-control(type='text', name='url', id='url')
+				.form-group
+					.col-sm-offset-3.col-sm-4
+						button.btn.btn-primary(type='submit')
+							| Add new bookmark
+		else
+			p I am NOT #{user.username}!

@@ -1,11 +1,12 @@
 var mongoose = require('mongoose');
 
 var bookmarkSchema = new mongoose.Schema({
+	_owner: { type: Number, ref: 'User' },
 	url: String,
 	name: String,
 	title: String,
 	updated: { type: Date, default: Date.now },
-	hidden: Boolean 
+	hidden: Boolean
 });
 
 /**
