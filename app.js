@@ -109,7 +109,6 @@ app.post('/account/profile', passportConf.isAuthenticated, userController.postUp
 app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
-app.post('/add', passportConf.isAuthenticated, userController.postAdd);
 
 /**
  * OAuth authentication routes. (Sign in)
@@ -139,6 +138,7 @@ app.get('/auth/linkedin/callback', passport.authenticate('linkedin', { failureRe
  * User profiles.
  */
 app.get('/:username', userController.getUser);
+app.post('/:username/add', userController.postAdd);
 
 /**
  * Error Handler.

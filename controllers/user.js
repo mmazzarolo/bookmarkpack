@@ -7,6 +7,8 @@ var User = require('../models/User');
 var Bookmark = require('../models/Bookmark');
 var secrets = require('../config/secrets');
 
+var request = require('request');
+
 /**
  * GET /login
  * Login page.
@@ -398,8 +400,7 @@ exports.postForgot = function(req, res, next) {
 exports.getUser = function(req, res) {
 	username = req.params.username;
 	User.findOne({ username: username }, function(err, user) {
-		if (!user) {return res.render('404');console.log("User not found.");};
-		console.log(JSON.stringify(user));
+		if (!user) {return res.render('404');};
 		res.render('user', {
 			title: username,
 			user: user
@@ -412,22 +413,45 @@ exports.getUser = function(req, res) {
  * New bookmark.
  */
 exports.postAdd = function(req, res) {
-	User.findById(req.user.id, function(err, user) {
+	var userPath = '/' + req.user.username;
+	req.assert('url', 'Invalid URL.').isURL();
+
+	var errors = req.validationErrors();
+
+	if (errors) {
+		req.flash('errors', errors);
+		return res.redirect(userPath);
+	}
+
+	async.waterfall([
+		// Extracting the title from the page
+		function(done) {
+			request(req.body.url, function (err, response, body) {
+		  	var re = new RegExp('<title>(.*?)</title>', 'i');
+				var title = body.match(re)[1];
+				done(err, title);
+			});
+		},
+		// Adding the new bookmark
+		function(title, done) {
+			User.findById(req.user.id, function(err, user) {
+				if (err) return next(err);
+				var bookmark = new Bookmark({
+					url: req.body.url,
+					name: req.body.name,
+					title: title,
+					hidden: false
+				});
+				user.bookmarks.push(bookmark);
+				user.save(function(err) {
+					if (err) return next(err);
+					req.flash('success', { msg: 'The bookmark has been added.' });
+					return res.redirect(userPath);
+				});
+			});
+		}
+	], function(err) {
 		if (err) return next(err);
-
-		var bookmark = new Bookmark({
-			url: req.body.url,
-			name: 'name',
-			title: 'title',
-			hidden: false
-		});
-
-		user.bookmarks.push(bookmark);
-
-		user.save(function(err) {
-			if (err) return next(err);
-			req.flash('success', { msg: 'The bookmark has been added.' });
-			res.redirect('/' + user.username);
-		});
+		res.redirect('/');
 	});
 };

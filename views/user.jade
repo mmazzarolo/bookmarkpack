@@ -14,8 +14,12 @@ block content
 			.page-header
 			h3 Add a new bookmark
 
-			form.form-horizontal(action='/add', method='POST')
+			form.form-horizontal(action='#{user.username}/add', method='POST')
 				input(type='hidden', name='_csrf', value=_csrf)
+				.form-group
+					label.col-sm-3.control-label(for='bookmark') Bookmark name (optional):
+					.col-sm-7
+						input.form-control(type='text', name='name', id='name')
 				.form-group
 					label.col-sm-3.control-label(for='bookmark') Bookmark URL:
 					.col-sm-7

@@ -53,7 +53,6 @@ userSchema.pre('save', function(next) {
  * Username validation.
  */
 userSchema.path('username').validate(function (username) {
-	console.log('ciao');
 	return !_.contains(reserved.usernames, username);
 }, 'Reserved username.');
 
