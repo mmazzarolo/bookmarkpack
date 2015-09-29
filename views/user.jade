@@ -1,20 +1,29 @@
 extends layout
 
 block content
-	h1 Username: #{user.username}
-	p Email: #{user.username}
 
-	ul
-	for bookmark in user.bookmarks
-		li: a(href='#{bookmark.url}') #{bookmark.title}
+	.page-header
+		h2 #{profile.username}'s bookmarks
 
+	table.table.table-condensed
+		thead
+			tr
+				th Name
+				th Edit
+		tbody
+			each bookmark in profile.bookmarks
+				tr
+					td
+						a(href=bookmark.url) #{bookmark.name}
+					td
+						a(href='/' + profile.username + '/' + bookmark._id) Edit
 
-	if session
-		if user._id = session._id
+	if user
+		if profile._id = user._id
 			.page-header
 			h3 Add a new bookmark
 
-			form.form-horizontal(action='#{user.username}/add', method='POST')
+			form.form-horizontal(action='/' + profile.username + '/add', method='POST')
 				input(type='hidden', name='_csrf', value=_csrf)
 				.form-group
 					label.col-sm-3.control-label(for='bookmark') Bookmark name (optional):
@@ -29,4 +38,6 @@ block content
 						button.btn.btn-primary(type='submit')
 							| Add new bookmark
 		else
-			p I am NOT #{user.username}!
+			p I am NOT #{profile.username}!
+	else
+		p I am not logged in!

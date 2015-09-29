@@ -43,6 +43,7 @@
     "passport-twitter": "^1.0.3",
     "request": "^2.64.0",
     "serve-favicon": "^2.3.0",
+    "string": "^3.3.1",
     "uglify-js": "^2.4.24",
     "validator": "^4.0.6"
   },

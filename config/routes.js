@@ -3,12 +3,15 @@ module.exports = function (app, passport) {
 	var homeController = require('../controllers/home');
 	var userController = require('../controllers/user');
 	var contactController = require('../controllers/contact');
+	var bookmarkController = require('../controllers/bookmark');
+
 	var passportConf = require('../config/passport');
+
+	app.get('/', homeController.index);
 
 	/**
 	 * Account routes.
 	 */
-	app.get('/', homeController.index);
 	app.get('/login', userController.getLogin);
 	app.post('/login', userController.postLogin);
 	app.get('/logout', userController.logout);
@@ -26,6 +29,12 @@ module.exports = function (app, passport) {
 	app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
 	app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
 	app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
+
+	/**
+	 * Contact routes.
+	 */
+	app.get('/contact', contactController.getContact);
+	app.post('/contact', contactController.postContact);
 
 	/**
 	 * OAuth authentication routes. (Sign in)
@@ -54,7 +63,15 @@ module.exports = function (app, passport) {
 	/**
 	 * User routes.
 	 */
+	app.param('username', userController.user);
 	app.get('/:username', userController.getUser);
-	app.post('/:username/add', userController.postAdd);
+
+	/**
+	 * Bookmark routes.
+	 */
+	app.param('bookmark', bookmarkController.bookmark);
+	app.post('/:username/add', passportConf.isAuthorized, bookmarkController.postAdd);
+	app.get('/:username/:bookmark', bookmarkController.getEdit);
+	app.post('/:username/:bookmark', passportConf.isAuthorized, bookmarkController.postEdit);
 
 };

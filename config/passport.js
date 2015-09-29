@@ -303,11 +303,6 @@ exports.isAuthenticated = function(req, res, next) {
  * Authorization Required middleware.
  */
 exports.isAuthorized = function(req, res, next) {
-	var provider = req.path.split('/').slice(-1)[0];
-
-	if (_.find(req.user.tokens, { kind: provider })) {
-		next();
-	} else {
-		res.redirect('/auth/' + provider);
-	}
+	if (req.profile._id.equals(req.user._id)) return next();
+	res.redirect('/203');
 };
